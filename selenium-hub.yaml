@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: selenium-hub
+    group: selenium-grid
+  name: selenium-hub
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: selenium-hub
+  template:
+    metadata:
+      labels:
+        run: selenium-hub
+        group: selenium-grid
+    spec:
+      containers:
+      - image: selenium/hub:3.12.0
+        name: selenium-hub
+        ports:
+        - containerPort: 4444
+          protocol: TCP
+        env:
+        - name: GRID_BROWSER_TIMEOUT
+          value: "10000"
+        - name: GRID_MAX_SESSION
+          value: "40"
+      restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: selenium-hub
+    group: selenium-grid
+  name: selenium-hub-service
+  namespace: default
+spec:
+  ports:
+  - port: 4444
+    nodePort: 30444
+    protocol: TCP
+    targetPort: 4444
+  selector:
+    run: selenium-hub
+  type: NodePort

@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: selenium-node-firefox
+  name: selenium-node-firefox
+  namespace: default
+spec:
+  replicas: 0
+  selector:
+    matchLabels:
+      run: selenium-node-firefox
+  template:
+    metadata:
+      labels:
+        run: selenium-node-firefox
+    spec:
+      containers:
+      - env:
+        - name: HUB_PORT_4444_TCP_ADDR
+          value: selenium-hub-service
+        - name: HUB_PORT_4444_TCP_PORT
+          value: "4444"
+        - name: NODE_MAX_INSTANCES
+          value: "1"
+        - name: NODE_MAX_SESSION
+          value: "1"
+        image: selenium/node-firefox:3.12.0
+        name: selenium-node-firefox
+      restartPolicy: Always
